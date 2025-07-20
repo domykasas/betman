@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build and Test Betman
 
 on:
   push:
@@ -43,13 +43,22 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - name: Build executable
+    - name: Build CLI
       run: |
         mkdir -p bin
-        go build -o bin/coinflip-p2p${{ runner.os == 'Windows' && '.exe' || '' }} .
+        go build -o bin/coinflip${{ runner.os == 'Windows' && '.exe' || '' }} main.go
+
+    - name: Build Server
+      run: |
+        go build -o bin/coinflip-server${{ runner.os == 'Windows' && '.exe' || '' }} main_server.go
+
+    - name: Build GUI (Linux/macOS only)
+      if: runner.os != 'Windows'
+      run: |
+        go build -tags gui -o bin/coinflip-gui${{ runner.os == 'Windows' && '.exe' || '' }} main_gui.go
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: coinflip-p2p-${{ runner.os }}
+        name: betman-${{ runner.os }}-${{ matrix.go-version }}
         path: bin/
