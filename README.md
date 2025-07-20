@@ -1,6 +1,6 @@
-# 🪙 Coin Flip Game
+# 🎮 Betman - Multiplayer Coin Flip Game
 
-An educational gambling game built with modern Go best practices, featuring both CLI and GUI interfaces. This project demonstrates clean architecture, dependency injection, comprehensive testing, and modern development practices.
+A true multiplayer P2P gambling game built with modern Go best practices, featuring real-time WebSocket communication, CLI and GUI interfaces. This project demonstrates clean architecture, dependency injection, comprehensive testing, and real-time multiplayer networking.
 
 ![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)
 ![License](https://img.shields.io/badge/License-Educational-green.svg)
@@ -9,17 +9,20 @@ An educational gambling game built with modern Go best practices, featuring both
 
 ## ✨ Features
 
-### 🎮 Game Features
-- **Simple Coin Flip Betting**: Heads or tails with configurable payout ratios
-- **Balance Management**: Starting balance and betting limits configuration
-- **Game History**: Comprehensive tracking of all games with statistics
-- **Fair Random Generation**: Cryptographically secure random number generation
+### 🎮 Multiplayer Game Features
+- **True P2P Multiplayer**: 2-8 players in synchronized game rooms
+- **Real-time WebSocket Communication**: Instant updates across all clients
+- **60-Second Betting Rounds**: Synchronized timers for all players
+- **Fair Consensus Random Generation**: Cryptographically secure shared randomness
+- **Live Player Statistics**: Win/loss ratios, profit tracking, real-time balances
+- **Comprehensive Game History**: Recent games with results tracking
+- **Player Identification**: Unique player IDs (Player1234, Player5678, etc.)
 
-### 🖥️ Dual Interface
-- **CLI Interface**: Command-line interface with Cobra for scripting and automation
-- **GUI Interface**: Cross-platform graphical interface built with Fyne
-- **Interactive Mode**: Real-time gameplay with immediate feedback
-- **Batch Mode**: Single-command betting for scripting
+### 🖥️ Triple Interface
+- **CLI Interface**: Command-line interface with Cobra for single-player and scripting
+- **Multiplayer GUI**: Real-time multiplayer interface with enhanced statistics
+- **WebSocket Server**: Dedicated server for multiplayer coordination
+- **Cross-platform**: Runs on Linux, Windows, and macOS
 
 ### 🏗️ Architecture
 - **Clean Architecture**: Domain-driven design with clear separation of concerns
@@ -44,8 +47,8 @@ An educational gambling game built with modern Go best practices, featuring both
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd coinflip-game
+git clone https://github.com/domykasas/betman.git
+cd betman
 
 # Install dependencies
 make deps
@@ -53,38 +56,56 @@ make deps
 # Run tests to verify installation
 make test
 
-# Build both CLI and GUI
+# Build all applications (CLI, GUI, Server)
 make build
 ```
 
-### Running the Game
+### Running Multiplayer Game
 
-#### CLI Interface
+#### 1. Start the Server
 ```bash
-# Interactive gameplay
-make play
+# Terminal 1: Start multiplayer server
+make run-server
 # or
-./bin/coinflip-cli play
-
-# Place a single bet
-./bin/coinflip-cli bet --amount 10 --choice heads
-
-# Check status and statistics
-./bin/coinflip-cli status
-
-# View game history
-./bin/coinflip-cli history
-
-# View configuration
-./bin/coinflip-cli config
+./bin/coinflip-server
 ```
 
-#### GUI Interface
+#### 2. Launch Multiple Players
 ```bash
-# Launch GUI application
+# Terminal 2: Player 1
 make run-gui
-# or
+
+# Terminal 3: Player 2  
 ./bin/coinflip-gui
+
+# Terminal 4: Player 3
+./bin/coinflip-gui
+```
+
+#### 3. CLI Interface (Single-player)
+```bash
+# Interactive single-player gameplay
+make run-cli
+# or
+./bin/coinflip play
+
+# Place a single bet
+./bin/coinflip bet --amount 10 --choice heads
+
+# Check status and statistics
+./bin/coinflip status
+
+# View game history
+./bin/coinflip history
+```
+
+### Multiplayer Game Flow
+```
+WAITING → BETTING (60s) → REVEALING → RESULT (10s) → WAITING
+           ↑              ↑         ↑
+         All players    Fair      Synchronized
+         place bets     coin      payouts
+                       flip
 ```
 
 ## 🔧 Development
@@ -92,14 +113,13 @@ make run-gui
 ### Building
 
 ```bash
-# Build for current platform
+# Build all applications
 make build
 
-# Build CLI only
-make build-cli
-
-# Build GUI only
-make build-gui
+# Build individual components
+make build-cli      # → bin/coinflip
+make build-gui      # → bin/coinflip-gui  
+make build-server   # → bin/coinflip-server
 
 # Cross-platform builds
 make build-all
@@ -161,25 +181,27 @@ make docs
 
 ### Project Structure
 ```
-coinflip-game/
-├── cmd/                    # Application entry points
-│   ├── cli/               # CLI implementation
-│   │   ├── main.go
-│   │   └── commands/      # Cobra commands
-│   └── gui/               # GUI implementation
-│       ├── main.go
-│       └── ui/            # Fyne UI components
-├── internal/              # Private application code
-│   ├── game/              # Core game logic
-│   ├── storage/           # Data persistence
-│   ├── config/            # Configuration management
-│   └── logger/            # Logging utilities
-├── configs/               # Configuration files
-├── tests/                 # Test files
-├── main_cli.go           # CLI entry point
-├── main_gui.go           # GUI entry point
-├── Dockerfile            # Container definition
-└── Makefile              # Build automation
+betman/
+├── main.go               # CLI entry point
+├── main_gui.go          # Multiplayer GUI entry point  
+├── main_server.go       # WebSocket server entry point
+├── cmd/                 # Application logic
+│   ├── cli/            # CLI implementation
+│   │   └── commands/   # Cobra commands
+│   └── gui/            # GUI implementation
+│       └── ui/         # Fyne UI components (multiplayer)
+├── internal/           # Private application code
+│   ├── game/          # Core game logic
+│   ├── network/       # WebSocket client/server/rooms
+│   ├── storage/       # Data persistence
+│   ├── config/        # Configuration management
+│   └── logger/        # Logging utilities
+├── configs/           # Configuration files
+├── .github/           # CI/CD workflows
+├── docker/            # Container definitions
+├── scripts/           # Build and utility scripts
+├── Dockerfile         # Main container definition
+└── Makefile           # Build automation
 ```
 
 ### Clean Architecture Layers
