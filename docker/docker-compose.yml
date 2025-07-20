@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  coinflip-p2p:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../data:/app/data
+    environment:
+      - DISPLAY=:0
+      - XDG_RUNTIME_DIR=/tmp/runtime-appuser
+    networks:
+      - coinflip-network
+    restart: unless-stopped
+
+  # Additional nodes for testing P2P functionality
+  coinflip-node2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8081:8080"
+    volumes:
+      - ../data-node2:/app/data
+    environment:
+      - DISPLAY=:0
+      - XDG_RUNTIME_DIR=/tmp/runtime-appuser
+    networks:
+      - coinflip-network
+    restart: unless-stopped
+
+  coinflip-node3:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8082:8080"
+    volumes:
+      - ../data-node3:/app/data
+    environment:
+      - DISPLAY=:0
+      - XDG_RUNTIME_DIR=/tmp/runtime-appuser
+    networks:
+      - coinflip-network
+    restart: unless-stopped
+
+networks:
+  coinflip-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  data:
+  data-node2:
+  data-node3:

@@ -1,0 +1,17 @@
+{
+  "game": {
+    "starting_balance": 1000.0,
+    "min_bet": 1.0,
+    "max_bet": 100.0,
+    "payout_ratio": 2.0
+  },
+  "logging": {
+    "level": "info",
+    "development": false
+  },
+  "ui": {
+    "theme": "dark",
+    "window_width": 800,
+    "window_height": 600
+  }
+}
